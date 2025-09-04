@@ -7,6 +7,7 @@ struct livre {
   int quantity;
   bool exist;
 };
+// test commit
 void printLivres(struct livre livres[],int size);
 void searchLivre(struct livre livres[],int size, char name[]);
 void deleteLivre(struct livre livres[],int size, char name[]);
