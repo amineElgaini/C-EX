@@ -146,7 +146,7 @@ void addLivre(struct livre livres[]) {
   livre.exist = 1;
 
   
-  livres = realloc(livres, size+1 * sizeof(struct livre));
+  livres = realloc(livres, (size+1) * sizeof(struct livre));
   livres[size] = livre;
   size++;
   
