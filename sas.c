@@ -4,18 +4,15 @@
 #include <stdbool.h>
 #include <time.h>
 
-enum Funcs
-{
+enum Funcs {
     ADD = 1,
     DELETE,
     SEARCH,
-    SEARCH_PLAYERS, //
+    SEARCH_PLAYERS,
     ORDER,
-
     DISPLAY,
     UPDATE,
-    SORT,
-    TOTAL,
+    STATISTIC, //
     EXIT
 };
 
@@ -42,7 +39,7 @@ char validPosts[][100] = {"gardien", "defenseir", "milieu", "attaquant"};
 char validStatus[][100] = {"titulaire", "remplacant"};
 
 typedef struct Player {
-    int id;
+    long id;
     char nom[100];
     char prenom[100];
     int numerMaillot;
@@ -122,7 +119,7 @@ void loadFromFile(Player **arr) {
 }
 
 void printPlayer(Player arr) {
-    printf("Id: %d, Nom: %s, Prenom: %s, numeroMaillot: %d, post: %s, age:%d, buts: %d, date: %d-%02d-%02d, status: %s\n", 
+    printf("Id: %ld, Nom: %s, Prenom: %s, numeroMaillot: %d, post: %s, age:%d, buts: %d, date: %d-%02d-%02d, status: %s\n", 
                (arr).id, (arr).nom, (arr).prenom, 
                (arr).numerMaillot, (arr).post, 
                (arr).age, (arr).buts, (arr).dateInscription.year,
@@ -198,7 +195,10 @@ void addPlayer(Player **arr) {
             printf("Error: Memory allocation failed!\n");
             return;
         }
-        newPlayer.id = player_count+1;
+
+        time_t current_time = time(NULL);
+        newPlayer.id = current_time;
+
         (*arr)[player_count] = newPlayer;
         player_count++;
 
@@ -220,9 +220,9 @@ void deletePlayer(Player **arr) {
         return;
     }
 
-    int id;
+    long id;
     printf("Enter player id: ");
-    scanf("%d", &id);
+    scanf("%ld", &id);
     clear_buffer();
     
     int found = 0;
@@ -306,9 +306,9 @@ void searchPlayer(Player **arr) {
     {
     case ID: {
 
-        int id;
+        long id;
         printf("Enter player id: ");
-        scanf("%d", &id);
+        scanf("%ld", &id);
         clear_buffer();
 
         for (int i = 0; i < player_count; i++) {
@@ -352,9 +352,9 @@ void updatePlayer(Player **arr) {
         return;
     }
 
-    int id;
+    long id;
     printf("Enter player id that you wanna update: ");
-    scanf("%d", &id);
+    scanf("%ld", &id);
     clear_buffer();
 
     char post[100];
@@ -406,7 +406,6 @@ enum SEARCH_PLAYERS {
 };
 
 void searchPlayers(Player **arr) {
-
     if (player_count == 0) {
         printf("No players to search!\n");
         return;
@@ -481,10 +480,115 @@ void searchPlayers(Player **arr) {
     }
 }
 
-enum SEARCH_PLAYER {
+enum ORDER_PLAYER {
     SORT_AGE=1,
     SORT_NOM
 };
+
+enum STATISTICS_OPTIONS {
+    TOTAL_JOUEURS = 1,    
+    AGE_MOYEN,            
+    BUTS_SUPERIEUR_DE,       
+    MEILLEUR_BUTEUR,      
+    JOUEUR_PLUS_JEUNE,    
+    JOUEUR_PLUS_AGE       
+};
+
+void statistics(Player **arr) {
+    if (player_count == 0) {
+        printf("No players to search!\n");
+        return;
+    }
+
+    int choix;
+    printf("Statistics Menu:\n");
+    printf("[1] Nombre total de joueurs\n");
+    printf("[2] age moyen des joueurs\n");
+    printf("[3] Joueurs avec plus de X buts\n");
+    printf("[4] Meilleur buteur\n");
+    printf("[5] Joueur le plus jeune\n");
+    printf("[6] Joueur le plus age\n");
+    printf("Votre choix: ");
+    scanf("%d", &choix);
+    clear_buffer();
+
+    switch (choix) {
+        case TOTAL_JOUEURS:
+            printf("Total number: %d\n", player_count);
+            break;
+        case AGE_MOYEN:
+            int ageMoyen=0;
+            for (int i = 0; i < player_count; i++) {
+                ageMoyen+=(*arr)[i].age;
+            }
+            ageMoyen /= player_count;
+            printf("Moyen de age est: %d\n", ageMoyen);
+            break;
+        case BUTS_SUPERIEUR_DE:
+            int sup=0;
+            scanf("%d", &sup);
+            clear_buffer();
+            int found = 0;
+            printf("Les jouer marque plus de %d est: \n", sup);
+            for (int i = 0; i < player_count; i++) {
+                if ((*arr)[i].buts > sup) {
+                    found = 1;
+                    printPlayer((*arr)[i]);
+                }
+            }
+            if (found==0) {
+                printf("0\n", sup);
+            }
+            break;
+
+        case MEILLEUR_BUTEUR:
+            int max = (*arr)[0].buts;
+
+            for (int i = 0; i < player_count; i++) {
+                if ((*arr)[i].buts > max) {
+                    max = (*arr)[i].buts;
+                }
+            } 
+            printf("Les meilleur buteur sont:\n");
+            for (int i = 0; i < player_count; i++) {
+                if ((*arr)[i].buts == max) {
+                    printPlayer((*arr)[i]);
+                }
+            }
+            break;
+        case JOUEUR_PLUS_JEUNE:
+            int minAge = (*arr)[0].age;
+            for (int i = 0; i < player_count; i++) {
+                if ((*arr)[i].age < minAge) {
+                    minAge = (*arr)[i].age;
+                }
+            } 
+            printf("Les joueer les plus jeune sont:\n");
+            for (int i = 0; i < player_count; i++) {
+                if ((*arr)[i].age == minAge) {
+                    printPlayer((*arr)[i]);
+                }
+            }
+            break;
+        case JOUEUR_PLUS_AGE:
+            int maxAge = (*arr)[0].age;
+            for (int i = 0; i < player_count; i++) {
+                if ((*arr)[i].age > maxAge) {
+                    maxAge = (*arr)[i].age;
+                }
+            } 
+            printf("Les joueer les plus age sont:\n");
+            for (int i = 0; i < player_count; i++) {
+                if ((*arr)[i].age == maxAge) {
+                    printPlayer((*arr)[i]);
+                }
+            }
+            break;
+        default:
+            printf("Choix invalide !\n");
+    }
+}
+
 void order(Player **arr) {
     if (player_count == 0) {
         printf("No players to sort!\n");
@@ -493,8 +597,8 @@ void order(Player **arr) {
 
     Player temp;
 
-        int choix;
-    printf("Enter CHOIX [1] post, [2] posts ,[3] age tranche:");
+    int choix;
+    printf("Enter choix [1] age, [2] nom:");
     scanf("%d", &choix);
     clear_buffer();
     
@@ -514,7 +618,7 @@ void order(Player **arr) {
         } case SORT_NOM: {
             for (int i = 0; i < player_count - 1; i++) {   
                 for (int j = 0; j < player_count - i - 1; j++) {   
-                    if ((*arr)[j].age > (*arr)[j+1].age) {
+                    if (strcmp((*arr)[j].nom, (*arr)[j+1].nom) > 0) {
                         temp = (*arr)[j];
                         (*arr)[j] = (*arr)[j + 1];
                         (*arr)[j + 1] = temp;
@@ -522,10 +626,8 @@ void order(Player **arr) {
                 }
             }
         } default:
-
-        break;
+            break;
     }
-
     
     saveToFile(*arr);
     printf("Players sorted successfully!\n");
@@ -540,14 +642,13 @@ int main() {
         printf("Enter 1 to add a player\n");
         printf("Enter 2 to delete a player\n");
 
-        printf("Enter 3 to search a player\n"); // id prenom
-        printf("Enter 4 to search players\n"); // post, postes, age tranch
-        printf("Enter 5 to order\n"); // tri age, tri prenom
-
+        printf("Enter 3 to search a player\n");
+        printf("Enter 4 to search players\n");
+        printf("Enter 5 to order\n");
         printf("Enter 6 to display all players\n");
         printf("Enter 7 to update player quantity\n");
-        printf("Enter 8 to sort player by year\n");
-        printf("Enter 9 to calculate total inventory value\n");
+
+        printf("Enter 8 statistic\n");
         printf("Enter 10 to exit\n");
         printf("Your choice: ");
         
@@ -583,11 +684,8 @@ int main() {
         case UPDATE:
             updatePlayer(&Players);
             break;
-        case SORT:
-            sortPlayer(&Players);
-            break;
-        case TOTAL:
-            printf("Total players: %d\n", player_count);
+        case STATISTIC:
+            statistics(&Players);
             break;
         case EXIT:
             if (Players) free(Players);
