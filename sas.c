@@ -387,7 +387,7 @@ void searchPlayer(Player **arr)
             {
                 printPlayer((*arr)[i]);
                 found = 1;
-                break;
+                // break;
             }
         }
         break;
@@ -779,6 +779,7 @@ void order(Player **arr)
 int main()
 {
     Player *Players = NULL;
+    // saveFakeDataToFile();
     loadFromFile(&Players);
     while (1)
     {
@@ -844,3 +845,42 @@ int main()
     }
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+// void saveFakeDataToFile()
+// {
+// Player fakeData[10] = {
+//     {1625152800, "lionel", "messi", 10, "attaquant", 34, 30, {1, 7, 2021}, "titulaire"},
+//     {1625239200, "cristiano", "ronaldo", 7, "attaquant", 36, 25, {2, 7, 2021}, "titulaire"},
+//     {1625325600, "neymar", "jr", 11, "attaquant", 29, 20, {3, 7, 2021}, "titulaire"},
+//     {1625412000, "kevin", "de bruyne", 17, "milieu", 30, 10, {4, 7, 2021}, "titulaire"},
+//     {1625498400, "virgil", "van dijk", 4, "defenseur", 30, 5, {5, 7, 2021}, "titulaire"},
+//     {1625584800, "manuel", "neuer", 1, "gardien", 35, 0, {6, 7, 2021}, "titulaire"},
+//     {1625671200, "kylian", "mbappe", 7, "attaquant", 22, 15, {7, 7, 2021}, "titulaire"},
+//     {1625757600, "luka", "modric", 10, "milieu", 36, 8, {8, 7, 2021}, "titulaire"},
+//     {1625844000, "sergio", "ramos", 4, "defenseur", 35, 6, {9, 7, 2021}, "titulaire"},
+//     {1625930400, "thibaut", "courtois", 1, "gardien", 29, 0, {10, 7, 2021}, "titulaire"}
+// };
+
+
+//     FILE *fp = fopen("./players.dat", "wb");
+//     if (fp == NULL)
+//     {
+//         printf("Error: Unable to save fake data to file!\n");
+//         return;
+//     }
+//     fwrite(fakeData, sizeof(Player), 10, fp);
+//     fclose(fp);
+//     printf("Fake data saved to file successfully!\n");
+// }
+
